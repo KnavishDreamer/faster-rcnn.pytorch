@@ -324,5 +324,5 @@ if __name__ == '__main__':
 		det_toc = time.time()
 		detect_time = det_toc - det_tic
 		misc_tic = time.time()
-		print(pred_boxes)
+		print(pred_boxes.shape)
 
