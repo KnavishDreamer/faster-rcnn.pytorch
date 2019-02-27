@@ -233,8 +233,9 @@ if __name__ == '__main__':
 	max_per_image = 100
 	thresh = 0.05
 	vis = True
-
+    
     imglist = os.listdir(args.image_dir)
+
     num_images = len(imglist)
     
     print('Loaded Photo: {} images.'.format(num_images))
