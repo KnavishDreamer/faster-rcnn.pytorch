@@ -236,8 +236,8 @@ if __name__ == '__main__':
 
     imglist = os.listdir(args.image_dir)
     num_images = len(imglist)
-
-	print('Loaded Photo: {} images.'.format(num_images))
+    
+    print('Loaded Photo: {} images.'.format(num_images))
 
 	while (num_images >= 0):
         total_tic = time.time()
