@@ -233,14 +233,18 @@ if __name__ == '__main__':
 	max_per_image = 100
 	thresh = 0.05
 	vis = True
-    
-    imglist = os.listdir(args.image_dir)
+    webcam_num = args.webcam_num
+	# Set up webcam or get image directories
+	if webcam_num >= 0 :
+		cap = cv2.VideoCapture(webcam_num)
+		num_images = 0
+	else:
+		imglist = os.listdir(args.image_dir)
+		num_images = len(imglist)
 
-    num_images = len(imglist)
-    
     print('Loaded Photo: {} images.'.format(num_images))
-
-	while (num_images >= 0):
+	
+    while (num_images >= 0):
         total_tic = time.time()
         if webcam_num == -1:
             num_images -= 1
