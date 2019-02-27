@@ -38,9 +38,9 @@ from model.faster_rcnn.resnet import resnet
 import pdb
 
 try:
-    xrange          # Python 2
+	xrange          # Python 2
 except NameError:
-    xrange = range  # Python 3
+	xrange = range  # Python 3
 
 
 def parse_args():
@@ -233,7 +233,8 @@ if __name__ == '__main__':
 	max_per_image = 100
 	thresh = 0.05
 	vis = True
-    webcam_num = args.webcam_num
+
+	webcam_num = args.webcam_num
 	# Set up webcam or get image directories
 	if webcam_num >= 0 :
 		cap = cv2.VideoCapture(webcam_num)
@@ -242,84 +243,83 @@ if __name__ == '__main__':
 		imglist = os.listdir(args.image_dir)
 		num_images = len(imglist)
 
-    print('Loaded Photo: {} images.'.format(num_images))
-	
-    while (num_images >= 0):
-        total_tic = time.time()
-        if webcam_num == -1:
-            num_images -= 1
+	print('Loaded Photo: {} images.'.format(num_images))
 
-        # Get image from the webcam
-        if webcam_num >= 0:
-            if not cap.isOpened():
-                raise RuntimeError("Webcam could not open. Please check connection.")
-            ret, frame = cap.read()
-            im_in = np.array(frame)
-        # Load the demo image
-        else:
-            im_file = os.path.join(args.image_dir, imglist[num_images])
-            # im = cv2.imread(im_file)
-            im_in = np.array(imread(im_file))
-        if len(im_in.shape) == 2:
-            im_in = im_in[:,:,np.newaxis]
-            im_in = np.concatenate((im_in,im_in,im_in), axis=2)
-        # rgb -> bgr
-        im = im_in[:,:,::-1]
+	while (num_images >= 0):
+		total_tic = time.time()
+		if webcam_num == -1:
+			num_images -= 1
 
-        blobs, im_scales = _get_image_blob(im)
-        assert len(im_scales) == 1, "Only single-image batch implemented"
-        im_blob = blobs
-        im_info_np = np.array([[im_blob.shape[1], im_blob.shape[2], im_scales[0]]], dtype=np.float32)
+		# Get image from the webcam
+		if webcam_num >= 0:
+			if not cap.isOpened():
+				raise RuntimeError("Webcam could not open. Please check connection.")
+			ret, frame = cap.read()
+			im_in = np.array(frame)
+		# Load the demo image
+		else:
+			im_file = os.path.join(args.image_dir, imglist[num_images])
+			# im = cv2.imread(im_file)
+			im_in = np.array(imread(im_file))
+		if len(im_in.shape) == 2:
+			im_in = im_in[:,:,np.newaxis]
+			im_in = np.concatenate((im_in,im_in,im_in), axis=2)
+		# rgb -> bgr
+		im = im_in[:,:,::-1]
 
-        im_data_pt = torch.from_numpy(im_blob)
-        im_data_pt = im_data_pt.permute(0, 3, 1, 2)
-        im_info_pt = torch.from_numpy(im_info_np)
+		blobs, im_scales = _get_image_blob(im)
+		assert len(im_scales) == 1, "Only single-image batch implemented"
+		im_blob = blobs
+		im_info_np = np.array([[im_blob.shape[1], im_blob.shape[2], im_scales[0]]], dtype=np.float32)
 
-        im_data.data.resize_(im_data_pt.size()).copy_(im_data_pt)
-        im_info.data.resize_(im_info_pt.size()).copy_(im_info_pt)
-        gt_boxes.data.resize_(1, 1, 5).zero_()
-        num_boxes.data.resize_(1).zero_()
+		im_data_pt = torch.from_numpy(im_blob)
+		im_data_pt = im_data_pt.permute(0, 3, 1, 2)
+		im_info_pt = torch.from_numpy(im_info_np)
 
-        # pdb.set_trace()
-        det_tic = time.time()
+		im_data.data.resize_(im_data_pt.size()).copy_(im_data_pt)
+		im_info.data.resize_(im_info_pt.size()).copy_(im_info_pt)
+		gt_boxes.data.resize_(1, 1, 5).zero_()
+		num_boxes.data.resize_(1).zero_()
 
-        rois, cls_prob, bbox_pred, \
-        rpn_loss_cls, rpn_loss_box, \
-        RCNN_loss_cls, RCNN_loss_bbox, \
-        rois_label = fasterRCNN(im_data, im_info, gt_boxes, num_boxes)
+		# pdb.set_trace()
+		det_tic = time.time()
 
-        scores = cls_prob.data
-        boxes = rois.data[:, :, 1:5]
+		rois, cls_prob, bbox_pred, \
+		rpn_loss_cls, rpn_loss_box, \
+		RCNN_loss_cls, RCNN_loss_bbox, \
+		rois_label = fasterRCNN(im_data, im_info, gt_boxes, num_boxes)
 
-        if cfg.TEST.BBOX_REG:
-            # Apply bounding-box regression deltas
-            box_deltas = bbox_pred.data
-            if cfg.TRAIN.BBOX_NORMALIZE_TARGETS_PRECOMPUTED:
-            # Optionally normalize targets by a precomputed mean and stdev
-                if args.class_agnostic:
-                    if args.cuda > 0:
-                        box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS).cuda() + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS).cuda()
-                    else:
-                        box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS) + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS)
-                    box_deltas = box_deltas.view(1, -1, 4)
-                else:
-                    if args.cuda > 0:
-                        box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS).cuda() + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS).cuda()
-                    else:
-                        box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS) + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS)
-                    box_deltas = box_deltas.view(1, -1, 4 * len(pascal_classes))
+		scores = cls_prob.data
+		boxes = rois.data[:, :, 1:5]
 
-            pred_boxes = bbox_transform_inv(boxes, box_deltas, 1)
-            pred_boxes = clip_boxes(pred_boxes, im_info.data, 1)
-        else:
-            # Simply repeat the boxes, once for each class
-            pred_boxes = np.tile(boxes, (1, scores.shape[1]))
+		if cfg.TEST.BBOX_REG:
+			# Apply bounding-box regression deltas
+			box_deltas = bbox_pred.data
+			if cfg.TRAIN.BBOX_NORMALIZE_TARGETS_PRECOMPUTED:
+			# Optionally normalize targets by a precomputed mean and stdev
+				if args.class_agnostic:
+					if args.cuda > 0:
+						box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS).cuda() + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS).cuda()
+					else:
+						box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS) + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS)
+					box_deltas = box_deltas.view(1, -1, 4)
+				else:
+					if args.cuda > 0:
+						box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS).cuda() + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS).cuda()
+					else:
+						box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS) + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS)
+					box_deltas = box_deltas.view(1, -1, 4 * len(pascal_classes))
 
-        pred_boxes /= im_scales[0]
+			pred_boxes = bbox_transform_inv(boxes, box_deltas, 1)
+			pred_boxes = clip_boxes(pred_boxes, im_info.data, 1)
+		else:
+			# Simply repeat the boxes, once for each class
+			pred_boxes = np.tile(boxes, (1, scores.shape[1]))
 
-        scores = scores.squeeze()
-        pred_boxes = pred_boxes.squeeze()
-        det_toc = time.time()
-        detect_time = det_toc - det_tic
-        misc_tic = time.time()
-		
+		pred_boxes /= im_scales[0]
+
+		scores = scores.squeeze()
+		pred_boxes = pred_boxes.squeeze()
+		det_toc = time.time()
+		detect_time = det_toc - det_tic
+		misc_tic = time.time()
