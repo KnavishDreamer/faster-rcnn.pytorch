@@ -292,7 +292,7 @@ if __name__ == '__main__':
 
 		scores = cls_prob.data
 		boxes = rois.data[:, :, 1:5]
-		print("Boxes Shape %s", str(boxes.shape))
+		print("Boxes Shape: ", str(boxes.shape))
 		if cfg.TEST.BBOX_REG:
 			# Apply bounding-box regression deltas
 			box_deltas = bbox_pred.data
@@ -317,6 +317,7 @@ if __name__ == '__main__':
 			# Simply repeat the boxes, once for each class
 			pred_boxes = np.tile(boxes, (1, scores.shape[1]))
 
+		print("Pred Box Shape: ", str(pred_boxes.shape))
 		pred_boxes /= im_scales[0]
 
 		scores = scores.squeeze()
@@ -324,4 +325,4 @@ if __name__ == '__main__':
 		det_toc = time.time()
 		detect_time = det_toc - det_tic
 		misc_tic = time.time()
-		print("Pred Box Shape %s", str(pred_boxes.shape))
+		print("Pred Box Shape: ", str(pred_boxes.shape))
