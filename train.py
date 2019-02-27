@@ -326,3 +326,24 @@ if __name__ == '__main__':
 		detect_time = det_toc - det_tic
 		misc_tic = time.time()
 		print("Pred Box Shape: ", str(pred_boxes.shape))
+		if vis:
+			im2show = np.copy(im)
+		for j in xrange(1,len(pascal_classes)):
+			inds = torch.nonzero(scores[:,j] > thresh).view(-1)
+			if(inds.numel() > 0):
+				cls_scores = scores[:,j][inds]
+				_, order = torch.sort(cls_scores, 0, True)
+				if args.class_agnostic:
+					cls_boxes = pred_boxes[inds, :]
+				else:
+					cls_boxes = pred_boxes[inds][:, j * 4:(j + 1) * 4]
+				print("CLS Boxes size: " ,cls_boxes.shape)
+				cls_dets = torch.cat((cls_boxes, cls_scores.unsqueeze(1)), 1)
+				# cls_dets = torch.cat((cls_boxes, cls_scores), 1)
+				cls_dets = cls_dets[order]
+				# keep = nms(cls_dets, cfg.TEST.NMS, force_cpu=not cfg.USE_GPU_NMS)
+				keep = nms(cls_boxes[order, :], cls_scores[order], cfg.TEST.NMS)
+				cls_dets = cls_dets[keep.view(-1).long()]
+				print("Cls Dets", cls_dets)
+				if vis:
+					im2show = vis_detections(im2show, pascal_classes[j], cls_dets.cpu().numpy(), 0.5)
