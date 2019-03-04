@@ -248,123 +248,123 @@ if __name__ == '__main__':
 
 	imglist = []
 	image_written = 0
-    current_dir = 'test'
-    images = os.listdir(current_dir)
-    count  = 0
-    print('Loaded Photo: {} images.'.format(len(images)))
-    for image in images:
-        count += 1
-        # if(count > 10):
-        # 	break
-        total_tic = time.time()
-        im_file = os.path.join(current_dir, image)
-        # im = cv2.imread(im_file)
-        im_in = np.array(imread(im_file))
-        if len(im_in.shape) == 2:
-            im_in = im_in[:,:,np.newaxis]
-            im_in = np.concatenate((im_in,im_in,im_in), axis=2)
-        # rgb -> bgr
-        im = im_in[:,:,::-1]
+	current_dir = 'test'
+	images = os.listdir(current_dir)
+	count  = 0
+	print('Loaded Photo: {} images.'.format(len(images)))
+	for image in images:
+		count += 1
+		# if(count > 10):
+		# 	break
+		total_tic = time.time()
+		im_file = os.path.join(current_dir, image)
+		# im = cv2.imread(im_file)
+		im_in = np.array(imread(im_file))
+		if len(im_in.shape) == 2:
+			im_in = im_in[:,:,np.newaxis]
+			im_in = np.concatenate((im_in,im_in,im_in), axis=2)
+		# rgb -> bgr
+		im = im_in[:,:,::-1]
 
-        # print(image)
-        blobs, im_scales = _get_image_blob(im)
-        
-        assert len(im_scales) == 1, "Only single-image batch implemented"
-        im_blob = blobs
-        im_info_np = np.array([[im_blob.shape[1], im_blob.shape[2], im_scales[0]]], dtype=np.float32)
+		# print(image)
+		blobs, im_scales = _get_image_blob(im)
 
-        im_data_pt = torch.from_numpy(im_blob)
-        im_data_pt = im_data_pt.permute(0, 3, 1, 2)
-        im_info_pt = torch.from_numpy(im_info_np)
+		assert len(im_scales) == 1, "Only single-image batch implemented"
+		im_blob = blobs
+		im_info_np = np.array([[im_blob.shape[1], im_blob.shape[2], im_scales[0]]], dtype=np.float32)
 
-        im_data.data.resize_(im_data_pt.size()).copy_(im_data_pt)
-        im_info.data.resize_(im_info_pt.size()).copy_(im_info_pt)
-        gt_boxes.data.resize_(1, 1, 5).zero_()
-        num_boxes.data.resize_(1).zero_()
+		im_data_pt = torch.from_numpy(im_blob)
+		im_data_pt = im_data_pt.permute(0, 3, 1, 2)
+		im_info_pt = torch.from_numpy(im_info_np)
 
-        # pdb.set_trace()
-        det_tic = time.time()
+		im_data.data.resize_(im_data_pt.size()).copy_(im_data_pt)
+		im_info.data.resize_(im_info_pt.size()).copy_(im_info_pt)
+		gt_boxes.data.resize_(1, 1, 5).zero_()
+		num_boxes.data.resize_(1).zero_()
 
-        rois, cls_prob, bbox_pred, \
-        rpn_loss_cls, rpn_loss_box, \
-        RCNN_loss_cls, RCNN_loss_bbox, \
-        rois_label = fasterRCNN(im_data, im_info, gt_boxes, num_boxes)
+		# pdb.set_trace()
+		det_tic = time.time()
 
-        scores = cls_prob.data
-        boxes = rois.data[:, :, 1:5]
-        if cfg.TEST.BBOX_REG:
-            # Apply bounding-box regression deltas
-            box_deltas = bbox_pred.data
-            if cfg.TRAIN.BBOX_NORMALIZE_TARGETS_PRECOMPUTED:
-            # Optionally normalize targets by a precomputed mean and stdev
-                if args.class_agnostic:
-                    if args.cuda > 0:
-                        box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS).cuda() + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS).cuda()
-                    else:
-                        box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS) + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS)
-                    box_deltas = box_deltas.view(1, -1, 4)
-                else:
-                    if args.cuda > 0:
-                        box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS).cuda() + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS).cuda()
-                    else:
-                        box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS) + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS)
-                    box_deltas = box_deltas.view(1, -1, 4 * len(pascal_classes))
+		rois, cls_prob, bbox_pred, \
+		rpn_loss_cls, rpn_loss_box, \
+		RCNN_loss_cls, RCNN_loss_bbox, \
+		rois_label = fasterRCNN(im_data, im_info, gt_boxes, num_boxes)
 
-            pred_boxes = bbox_transform_inv(boxes, box_deltas, 1)
-            pred_boxes = clip_boxes(pred_boxes, im_info.data, 1)
-        else:
-            # Simply repeat the boxes, once for each class
-            pred_boxes = np.tile(boxes, (1, scores.shape[1]))
+		scores = cls_prob.data
+		boxes = rois.data[:, :, 1:5]
+		if cfg.TEST.BBOX_REG:
+			# Apply bounding-box regression deltas
+			box_deltas = bbox_pred.data
+			if cfg.TRAIN.BBOX_NORMALIZE_TARGETS_PRECOMPUTED:
+			# Optionally normalize targets by a precomputed mean and stdev
+				if args.class_agnostic:
+					if args.cuda > 0:
+						box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS).cuda() + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS).cuda()
+					else:
+						box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS) + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS)
+					box_deltas = box_deltas.view(1, -1, 4)
+				else:
+					if args.cuda > 0:
+						box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS).cuda() + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS).cuda()
+					else:
+						box_deltas = box_deltas.view(-1, 4) * torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_STDS) + torch.FloatTensor(cfg.TRAIN.BBOX_NORMALIZE_MEANS)
+					box_deltas = box_deltas.view(1, -1, 4 * len(pascal_classes))
 
-        pred_boxes /= im_scales[0]
+			pred_boxes = bbox_transform_inv(boxes, box_deltas, 1)
+			pred_boxes = clip_boxes(pred_boxes, im_info.data, 1)
+		else:
+			# Simply repeat the boxes, once for each class
+			pred_boxes = np.tile(boxes, (1, scores.shape[1]))
 
-        scores = scores.squeeze()
-        pred_boxes = pred_boxes.squeeze()
-        det_toc = time.time()
-        detect_time = det_toc - det_tic
-        misc_tic = time.time()
-        im2show = np.copy(im)
-        for j in xrange(1,len(pascal_classes)):
-            class_name = pascal_classes[j]
-            if(class_name != 'person'):
-                continue
-            inds = torch.nonzero(scores[:,j] > thresh).view(-1)
-            if(inds.numel() > 0):
-                cls_scores = scores[:,j][inds]
-                _, order = torch.sort(cls_scores, 0, True)
-                cls_boxes = pred_boxes[inds, :]
-                        
-                cls_dets = torch.cat((cls_boxes, cls_scores.unsqueeze(1)), 1)
-                # cls_dets = torch.cat((cls_boxes, cls_scores), 1)
-                cls_dets = cls_dets[order]
-                # keep = nms(cls_dets, cfg.TEST.NMS, force_cpu=not cfg.USE_GPU_NMS)
-                keep = nms(cls_boxes[order, :], cls_scores[order], cfg.TEST.NMS)
-                cls_dets = cls_dets[keep.view(-1).long()]
-                dets_cpu = cls_dets.cpu().numpy()
-                accuracy = 0
-                region = []
-                for i in range(np.minimum(10, dets_cpu.shape[0])):
-                    bbox = tuple(int(np.round(x)) for x in dets_cpu[i, :4])
-                    score = dets_cpu[i, -1]
-                    if(score > accuracy):
-                        accuracy = score
-                        point_one = bbox[0:2]
-                        point_two = bbox[2:4]
-                        # print("Score",score)
-                        # print("Image shape", im2show.shape)
-                        # print("Point One: ", point_one)
-                        # print("Point Two: ", point_two)
-                        region = im2show[point_one[1]:point_two[1], point_one[0]: point_two[0]]
-                        # print("Region", region.shape)
-                # result_path  = os.path.join('temp', str(image_written) + ".jpg")
-                # cv2.imwrite(result_path, region)
-                # image_written += 1
-                region = cv2.resize(region, (200,200))
-                test_data.append(region)
-        
+		pred_boxes /= im_scales[0]
+
+		scores = scores.squeeze()
+		pred_boxes = pred_boxes.squeeze()
+		det_toc = time.time()
+		detect_time = det_toc - det_tic
+		misc_tic = time.time()
+		im2show = np.copy(im)
+		for j in xrange(1,len(pascal_classes)):
+			class_name = pascal_classes[j]
+			if(class_name != 'person'):
+				continue
+			inds = torch.nonzero(scores[:,j] > thresh).view(-1)
+			if(inds.numel() > 0):
+				cls_scores = scores[:,j][inds]
+				_, order = torch.sort(cls_scores, 0, True)
+				cls_boxes = pred_boxes[inds, :]
+
+				cls_dets = torch.cat((cls_boxes, cls_scores.unsqueeze(1)), 1)
+				# cls_dets = torch.cat((cls_boxes, cls_scores), 1)
+				cls_dets = cls_dets[order]
+				# keep = nms(cls_dets, cfg.TEST.NMS, force_cpu=not cfg.USE_GPU_NMS)
+				keep = nms(cls_boxes[order, :], cls_scores[order], cfg.TEST.NMS)
+				cls_dets = cls_dets[keep.view(-1).long()]
+				dets_cpu = cls_dets.cpu().numpy()
+				accuracy = 0
+				region = []
+				for i in range(np.minimum(10, dets_cpu.shape[0])):
+					bbox = tuple(int(np.round(x)) for x in dets_cpu[i, :4])
+					score = dets_cpu[i, -1]
+					if(score > accuracy):
+						accuracy = score
+						point_one = bbox[0:2]
+						point_two = bbox[2:4]
+						# print("Score",score)
+						# print("Image shape", im2show.shape)
+						# print("Point One: ", point_one)
+						# print("Point Two: ", point_two)
+						region = im2show[point_one[1]:point_two[1], point_one[0]: point_two[0]]
+						# print("Region", region.shape)
+				# result_path  = os.path.join('temp', str(image_written) + ".jpg")
+				# cv2.imwrite(result_path, region)
+				# image_written += 1
+				region = cv2.resize(region, (200,200))
+				test_data.append(region)
+
 
 	test_data = np.asarray(train_data)
 	print(test_data.shape)
 
-    model  = model.load('./cnn.h5')
-    model.predict(test_data)
+	model  = model.load('./cnn.h5')
+	model.predict(test_data)
