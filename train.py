@@ -267,7 +267,9 @@ if __name__ == '__main__':
 			# rgb -> bgr
 			im = im_in[:,:,::-1]
 
+			print(image)
 			blobs, im_scales = _get_image_blob(im)
+			
 			assert len(im_scales) == 1, "Only single-image batch implemented"
 			im_blob = blobs
 			im_info_np = np.array([[im_blob.shape[1], im_blob.shape[2], im_scales[0]]], dtype=np.float32)
@@ -349,12 +351,12 @@ if __name__ == '__main__':
 							accuracy = score
 							point_one = bbox[0:2]
 							point_two = bbox[2:4]
-							print("Score",score)
-							print("Image shape", im2show.shape)
-							print("Point One: ", point_one)
-							print("Point Two: ", point_two)
+							# print("Score",score)
+							# print("Image shape", im2show.shape)
+							# print("Point One: ", point_one)
+							# print("Point Two: ", point_two)
 							region = im2show[point_one[1]:point_two[1], point_one[0]: point_two[0]]
-							print("Region", region.shape)
+							# print("Region", region.shape)
 					result_path  = os.path.join('temp', str(image_written) + ".jpg")
 					cv2.imwrite(result_path, region)
 					image_written += 1
