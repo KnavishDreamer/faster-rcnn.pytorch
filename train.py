@@ -340,6 +340,9 @@ if __name__ == '__main__':
 					for i in range(np.minimum(10, dets_cpu.shape[0])):
 						bbox = tuple(int(np.round(x)) for x in dets_cpu[i, :4])
 						score = dets_cpu[i, -1]
+						point_one = bbox[0:2]
+						point_two = bbox[2:4]
 						print("Score",score)
-						print("BBox" ,bbox)
+						print("Point One: ", point_one)
+						print("Point Two: ", point_two)
 
