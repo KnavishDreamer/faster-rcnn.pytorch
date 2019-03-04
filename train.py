@@ -245,10 +245,10 @@ if __name__ == '__main__':
 	# 	num_images = len(imglist)
 
 	persons = [ 'chloe']
-
+	imglist = []
 	for person in persons:
 		images = os.listdir(args.image_dir + "/" + person)
-		imglist.append(images)
+		imglist.extend(images)
 
 	num_images = len(imglist)
 
