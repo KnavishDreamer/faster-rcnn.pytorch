@@ -350,8 +350,8 @@ if __name__ == '__main__':
 				dets_cpu = cls_dets.cpu().numpy()
 				print("Actual Dets" , dets_cpu)
 				for i in range(np.minimum(10, dets_cpu.shape[0])):
-					bbox = tuple(int(np.round(x)) for x in dets[i, :4])
-					score = dets[i, -1]
+					bbox = tuple(int(np.round(x)) for x in dets_cpu[i, :4])
+					score = dets_cpu[i, -1]
 					print("Score",score)
 					print("BBox" ,bbox)
 				if vis:
