@@ -367,4 +367,4 @@ if __name__ == '__main__':
 	print(test_data.shape)
 
 	model  = tf.keras.models.load_model('./cnn.h5')
-	model.predict(test_data)
+	print(model.predict(test_data))
