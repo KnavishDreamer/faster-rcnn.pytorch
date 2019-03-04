@@ -258,7 +258,8 @@ if __name__ == '__main__':
 		print('Loaded Photo: {} images.'.format(len(images)))
 		for image in images:
 			count += 1
-			if(count > 10) break
+			if(count > 10):
+				break
 			total_tic = time.time()
 			im_file = os.path.join(current_dir, image)
 			# im = cv2.imread(im_file)
