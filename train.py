@@ -244,9 +244,12 @@ if __name__ == '__main__':
 	# 	imglist = os.listdir(args.image_dir)
 	# 	num_images = len(imglist)
 
-	chloes = os.listdir(args.image_dir + "/chloe")
+	persons = [ 'chloe']
 
-	imglist = chloes
+	for person in persons:
+		images = os.listdir(args.image_dir + "/" + person)
+		imglist.append(images)
+
 	num_images = len(imglist)
 
 	print('Loaded Photo: {} images.'.format(num_images))
