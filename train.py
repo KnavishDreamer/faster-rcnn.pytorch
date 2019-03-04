@@ -245,8 +245,8 @@ if __name__ == '__main__':
 	# 	num_images = len(imglist)
 	train_data = []
 	train_labels = []
-	persons = [ 'chloe']
-	labels = [1]
+	persons = [ 'ram', 'shyam']
+	labels = [1 , 2]
 	imglist = []
 	image_written = 0
 	for person, label in zip(persons, labels):
