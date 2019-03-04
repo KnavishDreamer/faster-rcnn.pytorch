@@ -20,6 +20,7 @@ import torch
 from torch.autograd import Variable
 import torch.nn as nn
 import torch.optim as optim
+import tensorflow as tf
 
 import torchvision.transforms as transforms
 import torchvision.datasets as dset
@@ -373,3 +374,25 @@ if __name__ == '__main__':
 	print(train_data.shape)
 	print(train_labels.shape)
 
+	model = tf.keras.models.Sequential([
+		tf.keras.layers.Conv2D(filters=10, kernel_size= [3,3], activation=tf.nn.relu),
+		tf.keras.layers.MaxPooling2D(pool_size=[2,2]),
+		tf.keras.layers.Conv2D(filters=5, kernel_size=[3,3], activation=tf.nn.relu),
+		tf.keras.layers.MaxPooling2D(pool_size=[2,2]),
+		tf.keras.layers.Flatten(),
+		tf.keras.layers.Dense(len(labels),activation=tf.nn.softmax)
+	])
+
+	model.compile(
+		#optimizer= tf.keras.optimizers.RMSprop(lr=0.1, decay=1e-4),
+		optimizer='adam',
+		loss='sparse_categorical_crossentropy',
+		metrics=['accuracy']
+	)
+
+	model.fit(
+		train_data,
+		train_labels,
+		epochs=2,
+		shuffle=True
+	)
