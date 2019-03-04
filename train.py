@@ -254,9 +254,11 @@ if __name__ == '__main__':
 		print("Label", label)
 		current_dir = args.image_dir + "/" + person
 		images = os.listdir(current_dir)
-
+		count  = 0
 		print('Loaded Photo: {} images.'.format(len(images)))
 		for image in images:
+			count += 1
+			if(count > 10) break
 			total_tic = time.time()
 			im_file = os.path.join(current_dir, image)
 			# im = cv2.imread(im_file)
