@@ -248,6 +248,7 @@ if __name__ == '__main__':
 	persons = [ 'chloe']
 	labels = [1]
 	imglist = []
+	image_written = 0
 	for person, label in zip(persons, labels):
 		print("Person", person)
 		print("Label", label)
@@ -350,5 +351,9 @@ if __name__ == '__main__':
 						print("Point One: ", point_one)
 						print("Point Two: ", point_two)
 						region = im2show[point_one[1]:point_two[1], point_one[0]: point_two[0]]
-						print("Region", region.shape)						
+						print("Region", region.shape)
+						result_path  = os.path.join('train', image_written + ".jpg")
+						cv2.imwrite(result_path, region)
+						image_written += 1
+
 
