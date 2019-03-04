@@ -403,3 +403,4 @@ if __name__ == '__main__':
 		epochs=2,
 		shuffle=True
 	)
+	model.save('./cnn.h5')
