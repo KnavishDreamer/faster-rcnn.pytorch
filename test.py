@@ -363,7 +363,7 @@ if __name__ == '__main__':
 				test_data.append(region)
 
 
-	test_data = np.asarray(train_data)
+	test_data = np.asarray(test_data)
 	print(test_data.shape)
 
 	model  = model.load('./cnn.h5')
