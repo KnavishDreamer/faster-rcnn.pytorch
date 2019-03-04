@@ -349,6 +349,6 @@ if __name__ == '__main__':
 						print("Image shape", im2show.shape)
 						print("Point One: ", point_one)
 						print("Point Two: ", point_two)
-						region = im2show[point_two[1]:point_one[1], point_two[0]: point_one[0]]
+						region = im2show[point_one[1]:point_two[1], point_one[0]: point_two[0]]
 						print("Region", region.shape)						
 
