@@ -360,8 +360,15 @@ if __name__ == '__main__':
 							# print("Point Two: ", point_two)
 							region = im2show[point_one[1]:point_two[1], point_one[0]: point_two[0]]
 							# print("Region", region.shape)
-					result_path  = os.path.join('temp', str(image_written) + ".jpg")
-					cv2.imwrite(result_path, region)
-					image_written += 1
-
+					# result_path  = os.path.join('temp', str(image_written) + ".jpg")
+					# cv2.imwrite(result_path, region)
+					# image_written += 1
+					region = cv2.resize(region, (200,200))
+					train_data.append(region)
+					train_labels.append(label)
+		
+	
+	
+	print(train_data.shape)
+	print(train_labels.shape)
 
