@@ -292,7 +292,6 @@ if __name__ == '__main__':
 
 		scores = cls_prob.data
 		boxes = rois.data[:, :, 1:5]
-		print("Boxes Shape: ", str(boxes.shape))
 		if cfg.TEST.BBOX_REG:
 			# Apply bounding-box regression deltas
 			box_deltas = bbox_pred.data
@@ -345,7 +344,6 @@ if __name__ == '__main__':
 				cls_dets = cls_dets[order]
 				# keep = nms(cls_dets, cfg.TEST.NMS, force_cpu=not cfg.USE_GPU_NMS)
 				keep = nms(cls_boxes[order, :], cls_scores[order], cfg.TEST.NMS)
+				print("Keep" , keep.shape)
 				cls_dets = cls_dets[keep.view(-1).long()]
-
-				if vis:
-					im2show = vis_detections(im2show, pascal_classes[j], cls_dets.cpu().numpy(), 0.5)
+				print("Dets", cls_dets.shape)
