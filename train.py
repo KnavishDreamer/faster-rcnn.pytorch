@@ -368,7 +368,8 @@ if __name__ == '__main__':
 					train_labels.append(label)
 		
 	
-	
+	train_data = np.asarray(train_data)
+	train_labels = np.asarray(train_labels)
 	print(train_data.shape)
 	print(train_labels.shape)
 
