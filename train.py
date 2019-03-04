@@ -349,5 +349,10 @@ if __name__ == '__main__':
 				print("Dets", cls_dets.shape)
 				dets_cpu = cls_dets.cpu().numpy()
 				print("Actual Dets" , dets_cpu)
+				for i in range(np.minimum(10, dets_cpu.shape[0])):
+					bbox = tuple(int(np.round(x)) for x in dets[i, :4])
+					score = dets[i, -1]
+					print("Score",score)
+					print("BBox" ,bbox)
 				if vis:
 					im2show = vis_detections(im2show, pascal_classes[j], cls_dets.cpu().numpy(), 0.5)
