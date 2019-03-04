@@ -365,6 +365,16 @@ if __name__ == '__main__':
 
 	test_data = np.asarray(test_data)
 	print(test_data.shape)
-
 	model  = tf.keras.models.load_model('./cnn.h5')
-	print(model.predict(test_data))
+	result  = model.predict(test_data)
+	
+	for i in range(len(test_data)):
+		region = test_data[i]
+		results = result[i]
+		label = ''
+		if(results[0] > results[1]):
+			label = 'ram'
+		else:
+			label = 'shyam'
+		result_path  = os.path.join('results', label + str(i) + ".jpg")
+		cv2.imwrite(result_path, region)
