@@ -340,20 +340,23 @@ if __name__ == '__main__':
 					keep = nms(cls_boxes[order, :], cls_scores[order], cfg.TEST.NMS)
 					cls_dets = cls_dets[keep.view(-1).long()]
 					dets_cpu = cls_dets.cpu().numpy()
-			
+					accuracy = 0
+					region = []
 					for i in range(np.minimum(10, dets_cpu.shape[0])):
 						bbox = tuple(int(np.round(x)) for x in dets_cpu[i, :4])
 						score = dets_cpu[i, -1]
-						point_one = bbox[0:2]
-						point_two = bbox[2:4]
-						print("Score",score)
-						print("Image shape", im2show.shape)
-						print("Point One: ", point_one)
-						print("Point Two: ", point_two)
-						region = im2show[point_one[1]:point_two[1], point_one[0]: point_two[0]]
-						print("Region", region.shape)
-						result_path  = os.path.join('temp', str(image_written) + ".jpg")
-						cv2.imwrite(result_path, region)
-						image_written += 1
+						if(score > accuracy):
+							accuracy = score
+							point_one = bbox[0:2]
+							point_two = bbox[2:4]
+							print("Score",score)
+							print("Image shape", im2show.shape)
+							print("Point One: ", point_one)
+							print("Point Two: ", point_two)
+							region = im2show[point_one[1]:point_two[1], point_one[0]: point_two[0]]
+							print("Region", region.shape)
+					result_path  = os.path.join('temp', str(image_written) + ".jpg")
+					cv2.imwrite(result_path, region)
+					image_written += 1
 
 
