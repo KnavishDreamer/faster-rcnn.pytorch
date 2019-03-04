@@ -247,7 +247,7 @@ if __name__ == '__main__':
 	train_data = []
 	train_labels = []
 	persons = [ 'ram', 'shyam']
-	labels = [1 , 2]
+	labels = [0, 1]
 	imglist = []
 	image_written = 0
 	for person, label in zip(persons, labels):
