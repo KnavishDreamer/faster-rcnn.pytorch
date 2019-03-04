@@ -321,8 +321,7 @@ if __name__ == '__main__':
 			det_toc = time.time()
 			detect_time = det_toc - det_tic
 			misc_tic = time.time()
-			if vis:
-				im2show = np.copy(im)
+			im2show = np.copy(im)
 			for j in xrange(1,len(pascal_classes)):
 				class_name = pascal_classes[j]
 				if(class_name != 'person'):
@@ -347,6 +346,7 @@ if __name__ == '__main__':
 						point_one = bbox[0:2]
 						point_two = bbox[2:4]
 						print("Score",score)
-						print("Point One: ", point_one)
-						print("Point Two: ", point_two)
+						print("Image shape", im2show.shape)
+						# print("Point One: ", point_one)
+						# print("Point Two: ", point_two)
 
