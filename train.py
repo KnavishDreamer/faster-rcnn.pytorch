@@ -317,7 +317,6 @@ if __name__ == '__main__':
 			# Simply repeat the boxes, once for each class
 			pred_boxes = np.tile(boxes, (1, scores.shape[1]))
 
-		print("Pred Box Shape: ", str(pred_boxes.shape))
 		pred_boxes /= im_scales[0]
 
 		scores = scores.squeeze()
@@ -325,7 +324,6 @@ if __name__ == '__main__':
 		det_toc = time.time()
 		detect_time = det_toc - det_tic
 		misc_tic = time.time()
-		print("Pred Box Shape: ", str(pred_boxes.shape))
 		if vis:
 			im2show = np.copy(im)
 		for j in xrange(1,len(pascal_classes)):
@@ -340,13 +338,14 @@ if __name__ == '__main__':
 					cls_boxes = pred_boxes[inds, :]
 				else:
 					cls_boxes = pred_boxes[inds][:, j * 4:(j + 1) * 4]
-				print("CLS Boxes size: " ,cls_boxes.shape)
+				
+				print("Boxes " ,cls_boxes.shape)
 				cls_dets = torch.cat((cls_boxes, cls_scores.unsqueeze(1)), 1)
 				# cls_dets = torch.cat((cls_boxes, cls_scores), 1)
 				cls_dets = cls_dets[order]
 				# keep = nms(cls_dets, cfg.TEST.NMS, force_cpu=not cfg.USE_GPU_NMS)
 				keep = nms(cls_boxes[order, :], cls_scores[order], cfg.TEST.NMS)
 				cls_dets = cls_dets[keep.view(-1).long()]
-				print("Cls Dets", cls_dets)
+
 				if vis:
 					im2show = vis_detections(im2show, pascal_classes[j], cls_dets.cpu().numpy(), 0.5)
