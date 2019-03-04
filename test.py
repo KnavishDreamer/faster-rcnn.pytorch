@@ -248,7 +248,7 @@ if __name__ == '__main__':
 
 	imglist = []
 	image_written = 0
-	current_dir = 'test'
+	current_dir = 'test_data'
 	images = os.listdir(current_dir)
 	count  = 0
 	print('Loaded Photo: {} images.'.format(len(images)))
