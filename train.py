@@ -347,3 +347,7 @@ if __name__ == '__main__':
 				print("Keep" , keep.shape)
 				cls_dets = cls_dets[keep.view(-1).long()]
 				print("Dets", cls_dets.shape)
+				dets_cpu = cls_dets.cpu().numpy()
+				print("Actual Dets" , dets_cpu.shape)
+				if vis:
+					im2show = vis_detections(im2show, pascal_classes[j], cls_dets.cpu().numpy(), 0.5)
