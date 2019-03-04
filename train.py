@@ -329,6 +329,9 @@ if __name__ == '__main__':
 		if vis:
 			im2show = np.copy(im)
 		for j in xrange(1,len(pascal_classes)):
+			class_name = pascal_classes[j]
+			if(class_name != 'person'):
+				continue
 			inds = torch.nonzero(scores[:,j] > thresh).view(-1)
 			if(inds.numel() > 0):
 				cls_scores = scores[:,j][inds]
