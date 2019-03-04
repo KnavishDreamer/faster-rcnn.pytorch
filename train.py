@@ -65,7 +65,7 @@ def parse_args():
 											default="/srv/share/jyang375/models")
 	parser.add_argument('--image_dir', dest='image_dir',
 											help='directory to load images for demo',
-											default="images")
+											default="train_data")
 	parser.add_argument('--cuda', dest='cuda',
 											help='whether use CUDA',
 											action='store_true')
@@ -236,32 +236,26 @@ if __name__ == '__main__':
 	vis = True
 
 	webcam_num = args.webcam_num
-	# Set up webcam or get image directories
-	if webcam_num >= 0 :
-		cap = cv2.VideoCapture(webcam_num)
-		num_images = 0
-	else:
-		imglist = os.listdir(args.image_dir)
-		num_images = len(imglist)
+	# # Set up webcam or get image directories
+	# if webcam_num >= 0 :
+	# 	cap = cv2.VideoCapture(webcam_num)
+	# 	num_images = 0
+	# else:
+	# 	imglist = os.listdir(args.image_dir)
+	# 	num_images = len(imglist)
+
+	chloes = os.listdir(args.image_dir + "/chloe")
+
+	imglist = chloes
+	num_images = len(imglist)
 
 	print('Loaded Photo: {} images.'.format(num_images))
 
 	while (num_images >= 0):
 		total_tic = time.time()
-		if webcam_num == -1:
-			num_images -= 1
-
-		# Get image from the webcam
-		if webcam_num >= 0:
-			if not cap.isOpened():
-				raise RuntimeError("Webcam could not open. Please check connection.")
-			ret, frame = cap.read()
-			im_in = np.array(frame)
-		# Load the demo image
-		else:
-			im_file = os.path.join(args.image_dir, imglist[num_images])
-			# im = cv2.imread(im_file)
-			im_in = np.array(imread(im_file))
+		im_file = os.path.join(args.image_dir, imglist[num_images])
+		# im = cv2.imread(im_file)
+		im_in = np.array(imread(im_file))
 		if len(im_in.shape) == 2:
 			im_in = im_in[:,:,np.newaxis]
 			im_in = np.concatenate((im_in,im_in,im_in), axis=2)
