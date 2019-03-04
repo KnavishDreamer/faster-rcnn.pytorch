@@ -243,10 +243,14 @@ if __name__ == '__main__':
 	# else:
 	# 	imglist = os.listdir(args.image_dir)
 	# 	num_images = len(imglist)
-
+	train_data = []
+	train_labels = []
 	persons = [ 'chloe']
+	labels = [1]
 	imglist = []
-	for person in persons:
+	for person, label in zip(persons, labels):
+		print("Person", person)
+		print("Label", label)
 		current_dir = args.image_dir + "/" + person
 		images = os.listdir(current_dir)
 
