@@ -375,15 +375,18 @@ if __name__ == '__main__':
 	print(train_labels.shape)
 
 	model = tf.keras.models.Sequential([
-		tf.keras.layers.Conv2D(filters=50, kernel_size= [3,3], activation=tf.nn.relu),
+		tf.keras.layers.Conv2D(filters=32, kernel_size= [3,3], activation=tf.nn.relu),
 		tf.keras.layers.MaxPooling2D(pool_size=[2,2]),
-		tf.keras.layers.Conv2D(filters=25, kernel_size=[3,3], activation=tf.nn.relu),
+		tf.keras.layers.Conv2D(filters=64, kernel_size=[3,3], activation=tf.nn.relu),
 		tf.keras.layers.MaxPooling2D(pool_size=[2,2]),
-		tf.keras.layers.Conv2D(filters=10, kernel_size= [3,3], activation=tf.nn.relu),
+		tf.keras.layers.Conv2D(filters=128, kernel_size= [3,3], activation=tf.nn.relu),
 		tf.keras.layers.MaxPooling2D(pool_size=[2,2]),
-		tf.keras.layers.Conv2D(filters=5, kernel_size=[3,3], activation=tf.nn.relu),
+		tf.keras.layers.Conv2D(filters=64, kernel_size=[3,3], activation=tf.nn.relu),
+		tf.keras.layers.MaxPooling2D(pool_size=[2,2]),
+		tf.keras.layers.Conv2D(filters=32, kernel_size= [3,3], activation=tf.nn.relu),
 		tf.keras.layers.MaxPooling2D(pool_size=[2,2]),
 		tf.keras.layers.Flatten(),
+		tf.keras.layers.Dense(1024, activation=tf.nn.relu)
 		tf.keras.layers.Dense(len(labels),activation=tf.nn.softmax)
 	])
 
