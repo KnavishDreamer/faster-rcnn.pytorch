@@ -327,26 +327,19 @@ if __name__ == '__main__':
 				if(inds.numel() > 0):
 					cls_scores = scores[:,j][inds]
 					_, order = torch.sort(cls_scores, 0, True)
-					if args.class_agnostic:
-						cls_boxes = pred_boxes[inds, :]
-					else:
-						cls_boxes = pred_boxes[inds][:, j * 4:(j + 1) * 4]
-					
-					print("Boxes " ,cls_boxes.shape)
+					cls_boxes = pred_boxes[inds, :]
+							
 					cls_dets = torch.cat((cls_boxes, cls_scores.unsqueeze(1)), 1)
 					# cls_dets = torch.cat((cls_boxes, cls_scores), 1)
 					cls_dets = cls_dets[order]
 					# keep = nms(cls_dets, cfg.TEST.NMS, force_cpu=not cfg.USE_GPU_NMS)
 					keep = nms(cls_boxes[order, :], cls_scores[order], cfg.TEST.NMS)
-					print("Keep" , keep.shape)
 					cls_dets = cls_dets[keep.view(-1).long()]
-					print("Dets", cls_dets.shape)
 					dets_cpu = cls_dets.cpu().numpy()
-					print("Actual Dets" , dets_cpu)
+			
 					for i in range(np.minimum(10, dets_cpu.shape[0])):
 						bbox = tuple(int(np.round(x)) for x in dets_cpu[i, :4])
 						score = dets_cpu[i, -1]
 						print("Score",score)
 						print("BBox" ,bbox)
-					if vis:
-						im2show = vis_detections(im2show, pascal_classes[j], cls_dets.cpu().numpy(), 0.5)
+
