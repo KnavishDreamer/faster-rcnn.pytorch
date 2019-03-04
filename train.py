@@ -345,11 +345,10 @@ if __name__ == '__main__':
 						score = dets_cpu[i, -1]
 						point_one = bbox[0:2]
 						point_two = bbox[2:4]
-						region = im2show[point_two[1]:point_one[1], point_two[0]: point_one[0]]
 						print("Score",score)
 						print("Image shape", im2show.shape)
-						print("Region", region.shape)
-						
-						# print("Point One: ", point_one)
-						# print("Point Two: ", point_two)
+						print("Point One: ", point_one)
+						print("Point Two: ", point_two)
+						region = im2show[point_two[1]:point_one[1], point_two[0]: point_one[0]]
+						print("Region", region.shape)						
 
