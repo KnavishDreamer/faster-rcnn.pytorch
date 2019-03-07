@@ -400,7 +400,7 @@ if __name__ == '__main__':
 	model.fit(
 		train_data,
 		train_labels,
-		epochs=2,
+		epochs=20,
 		shuffle=True
 	)
 	model.save('./cnn.h5')
