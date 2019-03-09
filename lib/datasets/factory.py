@@ -58,6 +58,10 @@ for split in ['train', 'val', 'val1', 'val2', 'test']:
     devkit_path = 'data/imagenet/ILSVRC/devkit'
     data_path = 'data/imagenet/ILSVRC'
     __sets[name] = (lambda split=split, devkit_path=devkit_path, data_path=data_path: imagenet(split,devkit_path,data_path))
+# Set up wider face
+for split in ['train', 'val', 'test']:
+    name = 'wider_face_{}'.format(split)
+    __sets[name] = (lambda split=split: wider_face(split))
 
 def get_imdb(name):
   """Get an imdb (image database) by name."""
