@@ -165,7 +165,11 @@ if __name__ == '__main__':
   load_name = os.path.join(input_dir,
     'faster_rcnn_{}_{}_{}.pth'.format(args.checksession, args.checkepoch, args.checkpoint))
 
-  pascal_classes = np.asarray(['__background__',
+  pascal_classes = np.asarray(['__background__','aeroplane', 'bicycle', 'bird', 'boat',
+                       'bottle', 'bus', 'car', 'cat', 'chair',
+                       'cow', 'diningtable', 'dog', 'horse',
+                       'motorbike', 'pottedplant',
+                       'sheep', 'sofa', 'train', 'tvmonitor'
                        'face'])
 
   # initilize the network here.
