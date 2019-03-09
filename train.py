@@ -51,10 +51,10 @@ def parse_args():
 	parser = argparse.ArgumentParser(description='Train a Fast R-CNN network')
 	parser.add_argument('--dataset', dest='dataset',
 											help='training dataset',
-											default='pascal_voc', type=str)
+											default='wider_face', type=str)
 	parser.add_argument('--cfg', dest='cfg_file',
 											help='optional config file',
-											default='cfgs/vgg16.yml', type=str)
+											default='cfgs/res101.yml', type=str)
 	parser.add_argument('--net', dest='net',
 											help='vgg16, res50, res101, res152',
 											default='res101', type=str)
@@ -166,11 +166,7 @@ if __name__ == '__main__':
 		'faster_rcnn_{}_{}_{}.pth'.format(args.checksession, args.checkepoch, args.checkpoint))
 
 	pascal_classes = np.asarray(['__background__',
-											 'aeroplane', 'bicycle', 'bird', 'boat',
-											 'bottle', 'bus', 'car', 'cat', 'chair',
-											 'cow', 'diningtable', 'dog', 'horse',
-											 'motorbike', 'person', 'pottedplant',
-											 'sheep', 'sofa', 'train', 'tvmonitor'])
+											 'face'])
 
 	# initilize the network here.
 	if args.net == 'vgg16':
